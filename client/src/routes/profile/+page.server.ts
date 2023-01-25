@@ -1,7 +1,18 @@
 import { prisma } from "$lib/server/prisma";
 import { error, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
+import { z, ZodError } from "zod";
 
+const profileSchema = z.object({
+  firstName: z.string({ required_error: "First name is required" })
+  .trim()
+  .min(1, { message: "First name cannot be empty" })
+  .max(24, { message: "First name cannot exceed 24 characters" }),
+  lastName: z.string({ required_error: "Last name is required" })
+  .trim()
+  .min(1, { message: "Last name cannot be empty" })
+  .max(24, { message: "Last name cannot exceed 24 characters" })
+})
 
 export const load: PageServerLoad = async ({ locals }) => {
   const getUserProfile = async (userId: string | undefined) => {
@@ -26,6 +37,19 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions: Actions = {
   updateProfileInfo: async ({ request, locals }) => {
     const body = Object.fromEntries(await request.formData());
+
+    try {
+      const validatedForm = profileSchema.parse(body);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        const { fieldErrors: errors } = err.flatten();
+        const { ...rest } = body;
+        return {
+          data: rest,
+          errors
+        }
+      }
+    }
     
     // update if inputs are valid
     try {

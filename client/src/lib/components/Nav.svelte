@@ -92,7 +92,7 @@
       <img class="max-w-[40px]" alt="Dark Logo" src={darkLogo} />
     </picture>
   </a>
-  <div class="flex flex-row">
+  <div class="flex flex-row space-x-2">
     <!-- only show if user is signed in -->
     {#if loggedIn === true}
       <a href="/notes" class="rounded-lg hover:bg-gray-200 dark:hover:bg-slate-800 px-2 py-2 hover:cursor-pointer">
