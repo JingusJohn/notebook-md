@@ -1,4 +1,7 @@
+<script lang="ts">
+	// import type { Action } from "./$types";
 
+</script>
 <div class="flex flex-col items-center">
   <h1 class="text-3xl dark:text-white">Log In</h1>
   <form action="?/login" method="POST" class="flex flex-col">

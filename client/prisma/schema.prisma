@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Note {
+  id       String   @id
+  authorId String   @map("author_id")
+  type     String
+  content  String
+  profiles Profile @relation(fields: [authorId], references: [id])
+
+  @@map("notes")
+}
+
+model Profile {
+  id        String  @id
+  firstName String?
+  lastName  String?
+  notes     Note[]
+
+  @@map("profiles")
+}

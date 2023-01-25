@@ -57,6 +57,9 @@
         <form action="/signout" method="POST" use:enhance={enhancedLogout}>
           <button type="submit" class="rounded-lg hover:bg-gray-50 dark:hover:bg-slate-900 px-2 py-2 hover:cursor-pointer">Sign Out</button>
         </form>
+        <a href="/profile" class="rounded-lg hover:bg-gray-50 dark:hover:bg-slate-900 px-2 py-2 hover:cursor-pointer">
+          Profile
+        </a>
       {:else}
         <!-- show if user is signed out -->
         <a href="/login" class="rounded-lg hover:bg-gray-50 dark:hover:bg-slate-900 px-2 py-2 hover:cursor-pointer">
@@ -98,6 +101,9 @@
       <form action="/signout" method="POST" use:enhance={enhancedLogout}>
         <button type="submit" class="rounded-lg hover:bg-gray-200 dark:hover:bg-slate-800 px-2 py-2 hover:cursor-pointer">Sign Out</button>
       </form>
+      <a href="/profile" class="rounded-lg hover:bg-gray-200 dark:hover:bg-slate-800 px-2 py-2 hover:cursor-pointer">
+        Profile
+      </a>
     {:else}
       <!-- show if user is signed out -->
       <a href="/login" class="rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 px-2 py-2 hover:cursor-pointer">

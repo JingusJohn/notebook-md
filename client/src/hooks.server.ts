@@ -7,7 +7,6 @@ export const handle: Handle = async ({ event, resolve }) => {
   const { session, supabaseClient } = await getSupabase(event);
   event.locals.sb = supabaseClient;
   event.locals.session = session;
-  console.log("path: ", event.url.pathname)
   // for accessing notes routes
   if (event.url.pathname.startsWith("/notes")) {
     // if user is not signed in, redirect
@@ -16,7 +15,12 @@ export const handle: Handle = async ({ event, resolve }) => {
     } else {
       // if accessing a specific note, verify that the user owns that note
     }
+  } else if (event.url.pathname.startsWith("/profile")) {
+    if (!event.locals.session) {
+      throw redirect(303, "/login");
+    }
   }
+
 
   return resolve(event);
 }

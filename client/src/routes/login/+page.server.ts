@@ -13,7 +13,7 @@ export const actions: Actions = {
     if (err) {
       if (err instanceof AuthApiError && err.status === 400) {
         return fail(400, {
-          error: 'Invalid Credentials'
+          error: err.message
         })
       }
       return fail(500, {
@@ -21,6 +21,6 @@ export const actions: Actions = {
       );
     }
 
-    throw redirect(303, '/');
+    throw redirect(303, '/notes');
   }
 }

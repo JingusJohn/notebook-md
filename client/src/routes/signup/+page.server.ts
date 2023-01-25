@@ -1,7 +1,6 @@
 import { AuthApiError } from "@supabase/supabase-js";
 import { fail, redirect, type Actions } from "@sveltejs/kit";
 
-
 export const actions: Actions = {
   signup: async ({ request, locals }) => {
     const body = Object.fromEntries(await request.formData());
@@ -22,6 +21,6 @@ export const actions: Actions = {
       })
     }
 
-    throw redirect(303, "/");
+    throw redirect(303, "/login");
   }
 }
