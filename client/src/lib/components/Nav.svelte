@@ -26,7 +26,7 @@
 </script>
 
 <!-- Mobile Navbar -->
-<div class="sm:hidden flex flex-col dark:text-white px-2">
+<div class="sm:hidden flex flex-col dark:text-white px-2 select-none">
   <div class="flex flex-row justify-between py-2">
     <div class="dark:text-white hover:cursor-pointer" on:click={() => showTray = true}>
       <picture>
@@ -84,7 +84,7 @@
 </div>
 
 <!-- Larger Navbar -->
-<div class="hidden sm:flex flex-row px-2 py-2 dark:text-white items-center justify-between">
+<div class="hidden sm:flex flex-row px-2 py-2 dark:text-white items-center justify-between select-none">
   <!-- light and dark mode logo -->
   <a href="/">
     <picture >

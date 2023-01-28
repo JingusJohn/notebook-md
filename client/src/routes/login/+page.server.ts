@@ -38,9 +38,18 @@ export const actions: Actions = {
 
     if (err) {
       if (err instanceof AuthApiError && err.status === 400) {
-        return fail(400, {
-          error: err.message
-        });
+        console.log(err.message)
+        if (err.message === "Email not confirmed") {
+          const { password, ...rest } = body;
+          return {
+            data: rest,
+            emailError: true
+          }
+        } else {
+          return fail(400, {
+            error: err.message
+          });
+        }
       }
       return fail(500, {
         message: 'Something went wrong. Try again later or contact support.'}

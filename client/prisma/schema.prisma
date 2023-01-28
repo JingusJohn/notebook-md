@@ -8,11 +8,11 @@ datasource db {
 }
 
 model Note {
-  id       String  @id
+  id       String  @id @default(uuid())
   authorId String  @map("author_id")
   title    String  @unique
   type     String
-  content  String
+  content  String?
   profiles Profile @relation(fields: [authorId], references: [id])
 
   @@map("notes")

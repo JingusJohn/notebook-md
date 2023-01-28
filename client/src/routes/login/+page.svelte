@@ -1,18 +1,21 @@
 <script lang="ts">
-	import type { ActionData } from "./$types";
+	import type { ActionData } from './$types';
 
-  export let form: ActionData;
+	export let form: ActionData;
 </script>
 
 <div class="flex w-screen flex-col justify-center md:items-center px-2">
 	<h1 class="text-3xl dark:text-white text-center">Log In</h1>
+	{#if form?.emailError}
+    <p class="text-red-500">Check your email to verify your account. Then try logging in again.</p>
+  {/if}
 	<form action="?/login" method="POST" class="flex flex-col md:w-[50vw]">
 		<label for="email" class="dark:text-white">Email</label>
 		<input
 			type="text"
 			name="email"
-      required
-      placeholder="johnsmith@example.com"
+			required
+			placeholder="johnsmith@example.com"
 			class="h-10 px-2 rounded-lg bg-gray-200 outline-black dark:bg-slate-800 dark:text-white focus:outline-red-200"
 		/>
 		{#if form?.errors?.email}
@@ -24,14 +27,16 @@
 		<input
 			type="password"
 			name="password"
-      required
-      placeholder="password"
+			required
+			placeholder="password"
 			class="h-10 px-2 rounded-lg bg-gray-200 dark:bg-slate-800 dark:text-white focus:outline-red-200"
 		/>
 		{#if form?.errors?.password}
 			<label for="password" class="text-red-500">{form.errors.password[0]}</label>
 		{/if}
-		<button type="submit" class="h-10 text-white bg-blue-500 hover:bg-blue-800 rounded-lg mt-4">Login</button>
+		<button type="submit" class="h-10 text-white bg-blue-500 hover:bg-blue-800 rounded-lg mt-4"
+			>Login</button
+		>
 	</form>
 
 	<div class="dark:text-white pt-2 text-center">
