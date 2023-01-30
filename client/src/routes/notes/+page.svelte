@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
+	import { enhance } from '$app/forms';
 
 	export let data: PageServerData;
 	//export let form: ActionData;
@@ -11,10 +12,12 @@
 	const extensionMap: Map<string, string> = new Map();
 	extensionMap.set('markdown', 'md');
 	extensionMap.set('text', 'txt');
+
+	$: showNewNote = profileData?.notes.length == 0 ? true : showNewNote;
 </script>
 
 <div class="px-4 flex flex-col space-y-2 select-none">
-	{#if showNewNote}
+	{#if showNewNote || profileData?.notes.length == 0}
 		<h1 class="dark:text-white text-center text-3xl">New Note</h1>
 		<form
 			action="?/create_note"
@@ -83,22 +86,36 @@
 	</div>
 	{#if profileData}
 		{#each profileData?.notes as note}
-			<a href="/notes/{note.id}">
-				<div
-					class="rounded-lg md:rounded-xl bg-gray-200 dark:bg-slate-700 py-2 text-center text-black dark:text-white"
-				>
-					{note.title}<span class="text-gray-400 dark:text-slate-500"
-						>.{extensionMap.get(note.type)}</span
+			<div>
+				<a href="/notes/{note.id}">
+					<div
+						class="rounded-t-lg md:rounded-t-xl bg-gray-200 dark:bg-slate-700 py-2 text-center text-black dark:text-white"
 					>
+						{note.title}<span class="text-gray-400 dark:text-slate-500"
+							>.{extensionMap.get(note.type)}</span
+						>
+					</div>
+				</a>
+				<div class="flex flex-row justify-between rounded-lg">
+					<!-- Add query params to send user to the right tab -->
+					<a class="grow bg-gray-300 dark:bg-slate-300 text-center py-1 rounded-bl-lg md:rounded-bl-xl" href="/notes/{note.id}">EDIT</a
+					>
+					{#if note.type == 'markdown'}
+						<a class="grow bg-gray-500 dark:bg-slate-500 text-white text-center py-1" href="/notes/{note.id}">READ</a>
+					{/if}
+					<button class="grow bg-red-500 text-white rounded-br-lg md:rounded-br-xl" type="submit" form="form-{note.id}">DELETE</button>
 				</div>
-			</a>
+			</div>
+      <form id="form-{note.id}" class="hidden" method="POST" action="?/delete_note" use:enhance>
+        <input name="id" value={note.id} />
+      </form>
 		{/each}
 	{/if}
 	{#if profileData?.notes.length == 0}
 		<div
 			class="dark:text-gray-400 bg-gray-200 dark:bg-slate-700 rounded-lg md:rounded-xl text-center h-10"
 		>
-			Your Notes will Appear Here
+			You have no notes
 		</div>
 	{/if}
 </div>

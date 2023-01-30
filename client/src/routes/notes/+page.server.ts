@@ -6,7 +6,11 @@ import { z, ZodError } from 'zod';
 const noteSchema = z.object({
   title: z.string({ required_error: "title is required" }).trim(),
   type: z.string().trim()
-})
+});
+
+const deleteNoteSchema = z.object({
+  id: z.string({ required_error: "Need id of note to delete" }).trim()
+});
 
 export const load: PageServerLoad = async ({ locals }) => {
   console.log("preloading")
@@ -38,12 +42,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions: Actions = {
   create_note: async ({ request, locals }) => {
     const body = Object.fromEntries(await request.formData());
+    let dest: string;
 
     try {
       const validatedForm = noteSchema.parse(body);
-      console.log(validatedForm);
-      console.log("sb:", locals.sb);
-      console.log("session:", locals.session);
       if (locals.session?.user.id) {
         const note = await prisma.note.create({
           data: {
@@ -53,8 +55,8 @@ export const actions: Actions = {
             content: ""
           }
         });
+        dest = note.id;
 
-        throw redirect(303, `/notes/${note.id}`);
       } else {
         return fail(403, {
           message: "User not signed into an account"
@@ -73,6 +75,24 @@ export const actions: Actions = {
           error: "Server encountered an error. Please try again later or contact support"
         });
       }
+    }
+    throw redirect(303, `/notes/${dest}`);
+  },
+  delete_note: async ({ request, locals }) => {
+    const body = Object.fromEntries(await request.formData());
+    const validatedForm = deleteNoteSchema.parse(body);
+    const noteData = await prisma.note.findUnique({
+      where: {
+        id: validatedForm.id
+      }
+    });
+    const authorId = noteData != null ? noteData.authorId : null
+    if (locals.session?.user.id == authorId) {
+      const deletedNote = await prisma.note.delete({
+        where: {
+          id: validatedForm.id
+        }
+      })
     }
   }
 }
