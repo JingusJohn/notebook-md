@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
 	import { enhance } from '$app/forms';
-	import { z } from 'zod';
 
 	export let data: PageServerData;
 	//export let form: ActionData;
@@ -16,11 +15,6 @@
 
 	$: showNewNote = profileData?.notes.length == 0 ? true : showNewNote;
 
-	const noteSchema = z.object({
-		title: z.string(),
-		type: z.enum(["text", "markdown"])
-	})
-
 </script>
 
 <div class="px-4 flex flex-col space-y-2 select-none md:w-[80vw] lg:w-[65vw] xl:w-[50vw] md:m-auto">
@@ -30,6 +24,7 @@
 			action="?/create_note"
 			method="POST"
 			class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm: sm:space-x-2 sm:justify-between"
+			use:enhance
 		>
 			<div class="flex flex-col sm:flex-row justify-center">
 				<div
@@ -92,7 +87,7 @@
 		{/if}
 	</div>
 	{#if profileData}
-		{#each profileData?.notes as note}
+		{#each profileData?.notes as note, i}
 			<div>
 				<a href="/notes/{note.id}">
 					<div
@@ -105,17 +100,32 @@
 				</a>
 				<div class="flex flex-row justify-between rounded-lg">
 					<!-- Add query params to send user to the right tab -->
-					<a class="grow bg-gray-300 dark:bg-slate-300 text-center py-1 rounded-bl-lg md:rounded-bl-xl" href="/notes/{note.id}">EDIT</a
+					<a
+						class="grow bg-gray-300 dark:bg-slate-300 text-center py-1 rounded-bl-lg md:rounded-bl-xl"
+						href="/notes/{note.id}">EDIT</a
 					>
 					{#if note.type == 'markdown'}
-						<a class="grow bg-gray-500 dark:bg-slate-500 text-white text-center py-1" href="/notes/{note.id}">READ</a>
+						<a
+							class="grow bg-gray-500 dark:bg-slate-500 text-white text-center py-1"
+							href="/notes/{note.id}?mode=md-preview">READ</a
+						>
 					{/if}
-					<button class="grow bg-red-500 text-white rounded-br-lg md:rounded-br-xl" type="submit" form="form-{note.id}">DELETE</button>
+					<button
+						class="grow bg-red-500 text-white rounded-br-lg md:rounded-br-xl"
+						type="submit"
+						form="form-{note.id}">DELETE</button
+					>
 				</div>
 			</div>
-      <form id="form-{note.id}" class="hidden" method="POST" action="?/delete_note" use:enhance>
-        <input name="id" value={note.id} />
-      </form>
+			<form
+				id="form-{note.id}"
+				class="hidden"
+				method="POST"
+				action="?/delete_note"
+				use:enhance
+			>
+				<input name="id" value={note.id} />
+			</form>
 		{/each}
 	{/if}
 	{#if profileData?.notes.length == 0}

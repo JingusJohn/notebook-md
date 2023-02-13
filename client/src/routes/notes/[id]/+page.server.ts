@@ -7,11 +7,12 @@ const noteUpdateSchema = z.object({
   content: z.string({ required_error: "Content cannot be empty" })
 })
 
-export const load: PageServerLoad = async ({ params }: any) => {
+export const load: PageServerLoad = async ({ params, url }: any) => {
 
   const getNoteData = async (noteId: string) => {
     try {
       // get note data
+      console.log("params: ", params)
       console.log("ID: ", noteId);
       const note = await prisma.note.findUnique({
         where: {
@@ -22,11 +23,13 @@ export const load: PageServerLoad = async ({ params }: any) => {
     } catch (err) {
       console.log(err)
     }
-  }
+  };
+  console.log("mode: ", url.searchParams.get('mode'))
 
   return {
-    note: await getNoteData(params.id)
-  }
+    note: await getNoteData(params.id),
+    mode: url.searchParams.get('mode'),
+  };
 }
 
 export const actions: Actions = {

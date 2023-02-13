@@ -18,7 +18,7 @@
 	let { note } = data;
 	let { note: loadedNote } = JSON.parse(JSON.stringify(data));
 
-	let tab: string = 'raw';
+	let tab: string = data?.mode ?? 'raw';
 	$: preview = note != null ? marked.parse(note.content!) : '';
 	$: rows = note != null ? countLines(note.content!) : 1;
   let showSavedMessage: boolean = false;
