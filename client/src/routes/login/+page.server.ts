@@ -45,7 +45,14 @@ export const actions: Actions = {
             data: rest,
             emailError: true
           }
-        } else {
+        } else if (err.message === "Invalid login credentials") {
+          const {password, ...rest } = body;
+          return {
+            data: rest,
+            accountError: "Invalid credentials"
+          }
+        }
+        else {
           return fail(400, {
             error: err.message
           });

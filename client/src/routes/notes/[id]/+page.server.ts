@@ -33,6 +33,8 @@ export const actions: Actions = {
   save_note: async ({ params, request, locals }) => {
     const body = Object.fromEntries(await request.formData());
     const validatedForm = noteUpdateSchema.parse(body);
+    console.log("NOTE HERE: ", validatedForm)
+    
     // perform validation on user later
     try {
       const updateNote = await prisma.note.update({

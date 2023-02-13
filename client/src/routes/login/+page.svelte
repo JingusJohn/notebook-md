@@ -6,6 +6,9 @@
 
 <div class="flex w-screen flex-col justify-center md:items-center px-2">
 	<h1 class="text-3xl dark:text-white text-center">Log In</h1>
+  {#if form?.accountError}
+    <p class="text-red-500">Invalid login credentials. Ensure their validity.</p>
+  {/if}
 	{#if form?.emailError}
     <p class="text-red-500">Check your email to verify your account. Then try logging in again.</p>
   {/if}

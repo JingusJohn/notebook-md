@@ -1,7 +1,8 @@
 import { prisma } from "$lib/server/prisma";
-import { error, type Actions } from "@sveltejs/kit";
+import { error, type Actions, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { z, ZodError } from "zod";
+import { supabaseAdmin } from "$lib/server/supabase";
 
 const profileSchema = z.object({
   firstName: z.string({ required_error: "First name is required" })
@@ -66,5 +67,51 @@ export const actions: Actions = {
       console.log("Something weng wrong: ", err);
       throw error(500, "Something went wrong updating profile");
     }
-  }
+  },
+
+  deleteProfile: async ({ request, locals, fetch }) => {
+    const body = Object.fromEntries(await request.formData());
+    if (locals.session) {
+      const userId = locals.session.user.id;
+      
+      // delete notes
+      try {
+        let deletedNotes = await prisma.note.deleteMany({
+          where: {
+            authorId: userId
+          }
+        });
+
+      } catch (err) {
+        console.log('err at note delete')
+        console.log(err)
+      }
+
+      // delete profile
+      try {
+        let deletedProfile = await prisma.profile.delete({
+          where: {
+            id: userId
+          }
+        });
+      } catch (err) {
+        console.log('err at profile delete');
+        console.log(err)
+      }
+      // delete supabase account
+      const { data, error: dErr } = await supabaseAdmin.auth.admin.deleteUser(
+        locals.session.user.id
+      )
+      const { error: loErr } = await locals.sb.auth.signOut();
+
+      if (loErr) {
+        throw error(500, 'Could not log out.');
+      } else if (dErr) {
+        throw error(500, 'Could not delete account');
+      }
+
+      throw redirect(303, '/');
+
+      }
+    }
 }

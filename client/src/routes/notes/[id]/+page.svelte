@@ -2,6 +2,16 @@
 	import type { ActionData, PageServerData } from './$types';
 	import { marked } from 'marked';
 	import { enhance } from '$app/forms';
+	import { highlight, getLanguage } from 'highlightjs';
+
+  marked.setOptions({
+    renderer: new marked.Renderer(),
+    highlight: function(code, lang) {
+      const language = getLanguage(lang) ? lang : 'plaintext';
+      return highlight(language, code).value
+    },
+    langPrefix: 'hljs language-'
+  });
 
 	export let data: PageServerData;
 	export let form: ActionData;
@@ -9,17 +19,17 @@
 	let { note: loadedNote } = JSON.parse(JSON.stringify(data));
 
 	let tab: string = 'raw';
-	$: preview = note != null ? marked.parse(note.content) : '';
-	$: rows = note != null ? countLines(note.content) : 1;
+	$: preview = note != null ? marked.parse(note.content!) : '';
+	$: rows = note != null ? countLines(note.content!) : 1;
   let showSavedMessage: boolean = false;
 
 	const countLines = (input: string) => {
 		return input.split('\n').length + 1;
 	};
 
-	const handleSubmit = ({ form, data, action, cancel }) => {
+	const handleSubmit = ({ form, data, action, cancel }: any) => {
     loadedNote.content = JSON.parse(JSON.stringify(note?.content));
-		return async ({ result, update }) => {
+		return async ({ result, update }: any) => {
       showSavedMessage = true;
       setTimeout(() => {
         showSavedMessage = false;
@@ -80,6 +90,17 @@
 				<a href="https://www.markdownguide.org/basic-syntax/">Syntax</a>
 			{/if}
 		</article>
+		{#if note}
+			<form id="note-content" action="?/save_note" method="POST" use:enhance={handleSubmit} class="hidden">
+				<textarea
+					placeholder={note?.type === 'markdown' ? '# Awesome heading' : 'Awesome heading'}
+					name="content"
+					{rows}
+					class="bg-gray-100 dark:bg-slate-800 rounded-xl px-2 dark:text-white w-full"
+					bind:value={note.content}
+				/>
+			</form>
+		{/if}
 	{/if}
   {#if form?.message}
     <p>{form.message}</p>

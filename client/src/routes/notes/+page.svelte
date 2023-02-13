@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
 	import { enhance } from '$app/forms';
+	import { z } from 'zod';
 
 	export let data: PageServerData;
 	//export let form: ActionData;
@@ -14,9 +15,15 @@
 	extensionMap.set('text', 'txt');
 
 	$: showNewNote = profileData?.notes.length == 0 ? true : showNewNote;
+
+	const noteSchema = z.object({
+		title: z.string(),
+		type: z.enum(["text", "markdown"])
+	})
+
 </script>
 
-<div class="px-4 flex flex-col space-y-2 select-none">
+<div class="px-4 flex flex-col space-y-2 select-none md:w-[80vw] lg:w-[65vw] xl:w-[50vw] md:m-auto">
 	{#if showNewNote || profileData?.notes.length == 0}
 		<h1 class="dark:text-white text-center text-3xl">New Note</h1>
 		<form
